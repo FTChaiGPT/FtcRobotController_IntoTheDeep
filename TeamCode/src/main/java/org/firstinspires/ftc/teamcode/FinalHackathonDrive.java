@@ -109,13 +109,13 @@ public class FinalHackathonDrive extends OpMode {
         slides();
 
         if (gamepad2.b) {
-            clawPivot_crservo.setPower(0.5);
+            clawPivot_crservo.setPower(0.995);
         }
         else {
             clawPivot_crservo.setPower(0);
         }
         if (gamepad2.x){
-            clawPivot_crservo.setPower(-0.5);
+            clawPivot_crservo.setPower(-0.995);
         }
         else{
             clawPivot_crservo.setPower(0);

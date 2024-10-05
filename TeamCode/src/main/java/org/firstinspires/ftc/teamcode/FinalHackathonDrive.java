@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "FinalHackathonDrive")
@@ -37,8 +38,10 @@ public class FinalHackathonDrive extends OpMode {
 //        hang_servo.setDirection(Servo.Direction.FORWARD);
 //        hang_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        hang_servo.setPosition(0);
-//        right_front.setDirection(DcMotor.Direction.REVERSE);
-        right_back.setDirection(DcMotor.Direction.REVERSE);
+        left_front.setDirection(DcMotor.Direction.REVERSE);
+        left_back.setDirection(DcMotor.Direction.REVERSE);
+        right_front.setDirection(DcMotor.Direction.REVERSE);
+//        right_back.setDirection(DcMotor.Direction.REVERSE);
         left_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         left_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -135,9 +138,9 @@ public class FinalHackathonDrive extends OpMode {
             }
         }
 
-        left_front.setPower(gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x);
-        left_back.setPower(gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x);
-        right_front.setPower(gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x);
-        right_back.setPower(gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x);
+        left_front.setPower(-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x);
+        left_back.setPower(-gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x);
+        right_front.setPower(-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x);
+        right_back.setPower(-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x);
     }
 }

@@ -52,9 +52,9 @@ public class OurColorSensor{
     Color.colorToHSV(colors.toColor(), hsvValues);
 
     // Determine the detected color based on hue value
-    if (hsvValues[0] >= 200 && hsvValues[0] <= 250) {
+    if (hsvValues[0] >= 180 && hsvValues[0] <= 240) {
       detectedColor = DetectedColor.BLUE; // Hue range for blue
-    } else if (hsvValues[0] >= 50 && hsvValues[0] <= 70) {
+    } else if (hsvValues[0] >= 45 && hsvValues[0] <= 90) {
       detectedColor = DetectedColor.YELLOW; // Hue range for yellow
     } else if (hsvValues[0] >= 0 && hsvValues[0] <= 30) {
       detectedColor = DetectedColor.RED; // Hue range for red
@@ -64,6 +64,7 @@ public class OurColorSensor{
 
     // Display the detected color
     telemetry.addData("Detected Color", detectedColor);
+    telemetry.addData("Hue Value", hsvValues[0]);
     telemetry.update();
 
     relativeLayout.post(() -> relativeLayout.setBackgroundColor(Color.HSVToColor(hsvValues)));

@@ -58,7 +58,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 3.912489833920287;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -99,10 +99,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
         imu.initialize(parameters);
-        leftFront = hardwareMap.get(DcMotorEx.class, "front_left");
-        leftRear = hardwareMap.get(DcMotorEx.class, "back_left");
-        rightRear = hardwareMap.get(DcMotorEx.class, "back_right");
-        rightFront = hardwareMap.get(DcMotorEx.class, "front_right");
+        leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
+        leftRear = hardwareMap.get(DcMotorEx.class, "left_back");
+        rightRear = hardwareMap.get(DcMotorEx.class, "right_back");
+        rightFront = hardwareMap.get(DcMotorEx.class, "right_front");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -126,7 +126,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
 //        rightRear.setDirection(DcMotor.Direction.REVERSE);
-          rightFront.setDirection(DcMotor.Direction.REVERSE);
+//          rightFront.setDirection(DcMotor.Direction.REVERSE);
         // add if needed
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();

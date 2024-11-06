@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@Autonomous (name = "LM1_October_26_SampleAuton", group = "LM1_October_26")
+@Autonomous(name = "LM1_October_26_SampleAut66on", group = "LM1_October_26")
 
 public class AanyaSampleAuton extends LinearOpMode {
 

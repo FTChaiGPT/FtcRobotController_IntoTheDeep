@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -73,22 +74,36 @@ public class SampleAuton extends LinearOpMode {
                 .forward(2)
                 .build();
 
+        Trajectory All = drive.trajectoryBuilder(startPose)
+                .forward(24.5)
+                .build();
+
+        Trajectory All2 = drive.trajectoryBuilder(startPose)
+                .forward(2)
+                .splineTo(new Vector2d(-60, -52), Math.toRadians(240))
+                .build();
+
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(startPose);
-        drive.followTrajectory(gofromStart);
+//        drive.setPoseEstimate(startPose);
+//        drive.followTrajectory(gofromStart);
+//        drive.turn(Math.toRadians(-20));
+//        drive.setPoseEstimate(Pose2);
+//        drive.followTrajectory(PickUpSample1);
+//        drive.setPoseEstimate(Pose3);
+//        intake_motor.setPower(-0.995);
+//        sleep(1200);
+//        intake_motor.setPower(0);
+//        intake_servo.setPower(-0.995);
+//        sleep(3000);
+
+        drive.followTrajectory(All);
         drive.turn(Math.toRadians(-20));
-        drive.setPoseEstimate(Pose2);
-        drive.followTrajectory(PickUpSample1);
-        drive.setPoseEstimate(Pose3);
-        intake_motor.setPower(-0.995);
-        sleep(1200);
-        intake_motor.setPower(0);
-        intake_servo.setPower(-0.995);
-        sleep(3000);
+        drive.followTrajectory(All2);
+
 
         //intake_motor.setTargetPosition(0);
         //intake_servo.setPower(-0.995);

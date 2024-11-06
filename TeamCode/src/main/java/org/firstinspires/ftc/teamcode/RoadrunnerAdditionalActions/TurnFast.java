@@ -30,7 +30,7 @@ public class TurnFast extends LinearOpMode {
         if (drive == null || batteryVoltageSensor == null || fastTurnAmount == 0) return;
 
         drive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        /** drive = new SampleMecanumDrive(hardwareMap); is not applies because that parameter is passed in when the method is used if the object is created in this class itself, it will not allow itself to be used other than as a null object and then will lead to error: NullPointerException, cannot call "{whatever}" on null object reference. **/
+            /** drive = new SampleMecanumDrive(hardwareMap); is not applies because that parameter is passed in when the method is used if the object is created in this class itself, it will not allow itself to be used other than as a null object and then will lead to error: NullPointerException, cannot call "{whatever}" on null object reference. **/
 
         Pose2d STTcurrentPose = new Pose2d(0,0,0);
 

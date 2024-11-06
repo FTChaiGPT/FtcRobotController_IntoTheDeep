@@ -180,8 +180,8 @@ public class LM_October_26_DriverControl extends OpMode {
                 intake_hold = false;
                 score_once_debug_solution = true;
                 allow_intake_motor_to_spin = true;
-                intake_motor.setTargetPosition(-225);
-                intake_motor.setPower(0.35);
+                intake_motor.setTargetPosition(-186);
+                intake_motor.setPower(0.1);
                 intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }

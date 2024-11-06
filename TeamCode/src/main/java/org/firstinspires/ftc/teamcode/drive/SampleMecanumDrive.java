@@ -103,6 +103,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "left_back");
         rightRear = hardwareMap.get(DcMotorEx.class, "right_back");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_front");
+        //back odo = left_back
+        //left odo = left_front
+        //right odo = right_front
+        /** check StandardTrackingWheelLocalizer **/
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 

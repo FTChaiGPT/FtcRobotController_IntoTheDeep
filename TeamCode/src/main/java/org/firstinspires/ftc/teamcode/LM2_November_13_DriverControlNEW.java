@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import org.firstinspires.ftc.teamcode.DriveAdditionalActions.*;
 
 
 @TeleOp(name="LM2_November_13_DriverControlNEW", group = "A_LM1")
@@ -30,6 +30,8 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
 
     private VoltageSensor batteryVoltageSensor;
 
+    private TargetPositionHolder robot = new TargetPositionHolder();
+
     private double driveLeftX_debugger;
     private double driveLeftY_debugger;
     private double driveRightX_debugger;
@@ -41,10 +43,6 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
 
     private static final double COUNTS_PER_MOTOR_REV = 537.7;
     private static final double DRIVE_GEAR_REDUCTION = 1.0;
-
-    //intake arm positions
-    private static double POSITION_TO_MOVE_UP = 10.0;
-    private static double POSITION_TO_MOVE_DOWN = 1.0;
 
     //adjust servo positions for bucket
     private double pick_position = 0.25;
@@ -58,14 +56,8 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
     private boolean intake_was_pressed = false;
 
     //intake bucket variables
-    private boolean sample_last_picked = false;
-    private boolean trigger_was_pressed = false;
-
-    //intake bucket variables
     private boolean allow_intake_motor_to_spin = true;
     private boolean sample_intaked = false;
-
-    private boolean intake_hold = true;
 
     private int targetPosition;
 
@@ -178,43 +170,28 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
 
             if (intake_last_dropped) {
                 //drop position near bucket
+                intake_timer.reset();
                 score_once_debug_solution = false;
                 allow_intake_motor_to_spin = true;
-                intake_hold = true;
-                intake_timer.reset();
+                robot.stopHoldingDcMotor(intake_motor);
+                intake_motor.setTargetPosition(0);
+                intake_motor.setPower((0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
+                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             } else {
                 //pick position extended
                 intake_timer.reset();
-                intake_hold = false;
                 score_once_debug_solution = true;
                 allow_intake_motor_to_spin = true;
-                intake_motor.setTargetPosition(-205);
+                robot.stopHoldingDcMotor(intake_motor);
+                intake_motor.setTargetPosition(-192);
                 intake_motor.setPower((0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
                 intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
         intake_was_pressed = gamepad2.left_bumper;
 
-
-        if (intake_hold == true) {
-            /*holds at drop position near bucket
-            ~~~ 0 is start position as well and that gets in the way sometimes when a force (inertial or intentional/accidental external)
-            is applied by falling back down and not going back up so an alternating value of 1 is also needed */
-
-            if (intake_motor.getCurrentPosition() < -10 && intake_timer.milliseconds() > 1) {
-                intake_motor.setTargetPosition(0);
-                intake_motor.setPower((0.25 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
-                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            }
-            else if (intake_motor.getCurrentPosition() > -8 && intake_timer.milliseconds() > 1) {
-                intake_motor.setTargetPosition(0);
-                intake_motor.setPower(0.0);
-                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            }
-
-        }
-        else if(intake_hold && intake_motor.getTargetPosition() == -205 && intake_motor.getCurrentPosition() < -120) {
-            intake_motor.setPower(0);
+        if (intake_timer.milliseconds() > 250) {
+            robot.holdDcMotor(intake_motor, intake_motor.getTargetPosition(), batteryVoltageSensor);
         }
 
         telemetry.addData("intake_motor | target pos", intake_motor.getTargetPosition());
@@ -364,6 +341,13 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
             }
         }
     }
+
+    @Override//                                                   _
+    public void stop() {//                                         |
+        robot.killExecutor(intake_motor, batteryVoltageSensor);//  |`---- ⚠ Failing to add this chunk of code will result in spontaneous
+    }//                                                           _|    holding of motor(s) upon initialization and will require turning
+     //                                                                 the bot off & on or re-downloading. ⚠
+
 
 
     @Override

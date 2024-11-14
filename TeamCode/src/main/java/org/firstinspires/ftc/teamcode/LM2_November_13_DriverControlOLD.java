@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 
-@TeleOp(name="LM2_November_13_DriverControlOLD", group = "A_LM1")
+@TeleOp(name="LM2_November_13_DriverControlBACKUP", group = "A_LM1")
 public class LM2_November_13_DriverControlOLD extends OpMode {
     private DcMotor specimen_slides_motor;
     private DcMotor hang_motor;

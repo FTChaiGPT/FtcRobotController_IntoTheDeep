@@ -92,7 +92,7 @@ public class TargetPositionHolder extends LinearOpMode {
                     }
                 } catch (Exception e) {
                     Thread.currentThread().interrupt();
-                } finally { clearFuture(motor); }
+                } finally { clearFutureOfDcMotor(motor); }
 
             });
             if (motorTasks.containsKey(motor) == false) {
@@ -141,7 +141,7 @@ public class TargetPositionHolder extends LinearOpMode {
         return new double[] {gearRatio, ticksPerRev, holdPower, marginOfError, powerMultiplier};
     }
 
-    public void clearFuture(DcMotor motor) {
+    public void clearFutureOfDcMotor(DcMotor motor) {
         if (motorTasks.containsKey(motor)) motorTasks.remove(motor);
     }
 

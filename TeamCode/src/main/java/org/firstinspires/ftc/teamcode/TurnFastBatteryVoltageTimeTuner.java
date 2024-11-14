@@ -52,6 +52,7 @@ public class TurnFastBatteryVoltageTimeTuner extends LinearOpMode {
 
         while(opModeIsActive()) {
             telemetry.addData("TIME STAMP: ", timeStamp);
+            drive.updatePoseEstimate();
             telemetry.addData("Current Pose: ", drive.getPoseEstimate());
             telemetry.addData("Voltage: ", batteryVoltageSensor.getVoltage());
             if (previousBatteryVoltage != batteryVoltageSensor.getVoltage()) {

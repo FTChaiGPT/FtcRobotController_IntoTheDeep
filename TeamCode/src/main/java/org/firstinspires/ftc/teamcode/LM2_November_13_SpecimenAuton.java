@@ -10,26 +10,26 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@Autonomous (name = "LM1_October_26_SpecimenAuton", group = "A_LM1")
-public class LM1_October_26_SpecimenAuton extends LinearOpMode {
+@Autonomous (name = "LM2_November_13_SpecimenAuton", group = "A_LM1")
+public class LM2_November_13_SpecimenAuton extends LinearOpMode {
 
-    private DcMotor left_front;
-    private DcMotor left_back;
-    private DcMotor right_front;
-    private DcMotor right_back;
+    private DcMotorEx left_front;
+    private DcMotorEx left_back;
+    private DcMotorEx right_front;
+    private DcMotorEx right_back;
 
     private DcMotor specimen_slides_motor;
 
     @Override
     public void runOpMode() {
 
-        left_front = hardwareMap.get(DcMotor.class, "left_front");
-        left_back = hardwareMap.get(DcMotor.class, "left_back");
-        right_front = hardwareMap.get(DcMotor.class, "right_front");
-        right_back = hardwareMap.get(DcMotor.class, "right_back");
+        left_front = hardwareMap.get(DcMotorEx.class, "left_front");
+        left_back = hardwareMap.get(DcMotorEx.class, "left_back");
+        right_front = hardwareMap.get(DcMotorEx.class, "right_front");
+        right_back = hardwareMap.get(DcMotorEx.class, "right_back");
 
         specimen_slides_motor = hardwareMap.get(DcMotor.class, "specimen_slides_motor");
-        specimen_slides_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        specimen_slides_motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap); // the SampleMecanumDrive class (RoadRunner) is made into an object
         drive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -41,7 +41,7 @@ public class LM1_October_26_SpecimenAuton extends LinearOpMode {
         Pose2d pickSpecimenPose = new Pose2d(0, 0, Math.toRadians(0));
 
         Trajectory goToRung = drive.trajectoryBuilder(startPose)
-                .forward(32)
+                .forward(33.5)
                 .build();
 
         Trajectory releaseClinchWithRung = drive.trajectoryBuilder(goToRung.end())
@@ -83,7 +83,7 @@ public class LM1_October_26_SpecimenAuton extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
 
-        specimen_slides_motor.setPower(0.47);
+        specimen_slides_motor.setPower(0.55);
         drive.followTrajectory(goToRung);
         specimen_slides_motor.setPower(0);
 

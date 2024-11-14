@@ -14,9 +14,9 @@ public class _____DriveSection extends OpMode {
         /* TODO: WRITING MANNER:
             Classes: PascalCase
             Methods/Functions/Objects:
-            camelCase_[objecttype <- (lowercase)] (i. e. hang_crservo)
+            camelCase_[objecttype <- (lowercase)] (i. e. outtakeSlides_motor | hang_crservo)
             Variables/Lists: static and/or final will be UPPER_SNAKE_CASE otherwise it'll be in camelCase
-            Fields: In constructors UPPER_SNAKE_CASE | In functions or methods camelCase
+            Fields: In constructors, functions or methods, use camelCase
             Enums: UPPER_SNAKE_CASE
             Booleans: based on scenario will be use either as isBlahBlahBlah or [prefix]_purpose (i. e. isHangUp | cur_gamepad2a <- inferred that it's referring to pressed) */
 

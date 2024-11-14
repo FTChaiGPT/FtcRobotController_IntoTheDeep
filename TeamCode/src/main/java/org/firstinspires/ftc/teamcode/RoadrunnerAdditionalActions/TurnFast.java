@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoadrunnerAdditionalActions;
 
+import static android.os.SystemClock.sleep;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -8,24 +10,40 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-import java.util.Objects;
 
-@Config //Can edit FAST_TURN_WAIT_TIME and OPTIMAL_BATTERY_VOLTAGE in FTC Dashboard
-@Autonomous(name = "TurnFast")
+@Config //Can edit FAST_TURN_WAIT_TIME, OPTIMAL_BATTERY_VOLTAGEs, and TRAINED_EXP_MULTIPLIERs in FTC Dashboard
+@Autonomous (name = "TurnFast")
 public class TurnFast extends LinearOpMode {
 
     // TODO: Tune MAX_VEL ~ DONE
     // TODO: Tune MAX_ACCEL ~ DONE
-    // TODO: Tune/Check MAX_ANG_ACCEL ~ probably already perfect
+    // TODO: Tune/Check MAX_ANG_ACCEL ~ DONE - usually already perfect
 
-    public static long FAST_TURN_WAIT_TIME = 630;  //TODO: Needs to be tuned
-    public static double OPTIMAL_BATTERY_VOLTAGE = 12.973;
+    public static double FAST_TURN_WAIT_TIME = 630;
+    public static double TRAINED_EXP_MULTIPLIER1 = 1.0;
+    public static double TRAINED_EXP_MULTIPLIER2 = 0.995875;
+    public static double TRAINED_EXP_MULTIPLIER3 = 0.9475;
+    public static double TRAINED_EXP_MULTIPLIER4 = 0.6;
+    public static double TRAINED_EXP_MULTIPLIER5 = 1;
+    public static double TRAINED_EXP_MULTIPLIER6 = 1;
+    public static double TRAINED_EXP_MULTIPLIER7 = 1;
 
-    public void turnFast(long fastTurnAmount, SampleMecanumDrive drive, VoltageSensor batteryVoltageSensor, Telemetry telemetry) {
+    public static double OPTIMAL_BATTERY_VOLTAGE1 = 12.7321;
+    public static double OPTIMAL_BATTERY_VOLTAGE2 = 12.89;
+    public static double OPTIMAL_BATTERY_VOLTAGE3 = 12.95;
+    public static double OPTIMAL_BATTERY_VOLTAGE4 = 0;
+    public static double OPTIMAL_BATTERY_VOLTAGE5 = 0;
+    public static double OPTIMAL_BATTERY_VOLTAGE6 = 0;
+    public static double OPTIMAL_BATTERY_VOLTAGE7 = 0;
+
+    private ElapsedTime timer = new ElapsedTime();
+
+    public void turnFast(double fastTurnAmount, SampleMecanumDrive drive, VoltageSensor batteryVoltageSensor, Telemetry telemetry) {
 
         if (drive == null || batteryVoltageSensor == null || fastTurnAmount == 0) return;
 
@@ -36,7 +54,13 @@ public class TurnFast extends LinearOpMode {
 
         drive.setPoseEstimate(STTcurrentPose);
         drive.setDrivePower(new Pose2d(0, 0, 1));
-        sleep(FAST_TURN_WAIT_TIME * ((long) OPTIMAL_BATTERY_VOLTAGE / (long) batteryVoltageSensor.getVoltage())); /**Get primal voltage**/ // * (primal voltage / actual voltage)
+        //sleep(FAST_TURN_WAIT_TIME * ((long) OPTIMAL_BATTERY_VOLTAGE / (long) batteryVoltageSensor.getVoltage())); //wait time * (primal voltage / actual voltage)
+        timer.reset();
+        while(timer.milliseconds() <= (FAST_TURN_WAIT_TIME * TRAINED_EXP_MULTIPLIER4)) {
+            telemetry.addLine("Turning");
+            telemetry.update();
+        }
+        telemetry.clearAll();
         drive.setDrivePower(new Pose2d(0, 0, -1));  /**Braking system - limiting deceleration**/
         sleep(1);                                      /**Braking system - limiting deceleration**/
         drive.setDrivePower(new Pose2d(0, 0, 0));   /**Braking system - limiting deceleration**/

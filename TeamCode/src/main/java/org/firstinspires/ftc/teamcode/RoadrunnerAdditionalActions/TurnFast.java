@@ -26,18 +26,12 @@ public class TurnFast extends LinearOpMode {
     public static double TRAINED_EXP_MULTIPLIER1 = 1.0;
     public static double TRAINED_EXP_MULTIPLIER2 = 0.995875;
     public static double TRAINED_EXP_MULTIPLIER3 = 0.9475;
-    public static double TRAINED_EXP_MULTIPLIER4 = 0.6;
-    public static double TRAINED_EXP_MULTIPLIER5 = 1; //TODO: yet to be tested
-    public static double TRAINED_EXP_MULTIPLIER6 = 1;
-    public static double TRAINED_EXP_MULTIPLIER7 = 1;
+    public static double TRAINED_EXP_MULTIPLIER4 = 0.88;
 
     public static double OPTIMAL_BATTERY_VOLTAGE1 = 12.7321;
     public static double OPTIMAL_BATTERY_VOLTAGE2 = 12.89;
     public static double OPTIMAL_BATTERY_VOLTAGE3 = 12.95;
-    public static double OPTIMAL_BATTERY_VOLTAGE4 = 0;
-    public static double OPTIMAL_BATTERY_VOLTAGE5 = 0;
-    public static double OPTIMAL_BATTERY_VOLTAGE6 = 0;
-    public static double OPTIMAL_BATTERY_VOLTAGE7 = 0;
+    public static double OPTIMAL_BATTERY_VOLTAGE4 = 13.632;
 
     private ElapsedTime timer = new ElapsedTime();
 
@@ -53,8 +47,12 @@ public class TurnFast extends LinearOpMode {
         drive.setPoseEstimate(STTcurrentPose);
         drive.setDrivePower(new Pose2d(0, 0, 1));
         //sleep(FAST_TURN_WAIT_TIME * ((long) OPTIMAL_BATTERY_VOLTAGE / (long) batteryVoltageSensor.getVoltage())); //wait time * (primal voltage / actual voltage)
+
+        double base = ((OPTIMAL_BATTERY_VOLTAGE1 + OPTIMAL_BATTERY_VOLTAGE2 + OPTIMAL_BATTERY_VOLTAGE3 + OPTIMAL_BATTERY_VOLTAGE4) / 4) / batteryVoltageSensor.getVoltage();
+        double exponent = (((Math.log(TRAINED_EXP_MULTIPLIER1) / Math.log(OPTIMAL_BATTERY_VOLTAGE1)) + (Math.log(TRAINED_EXP_MULTIPLIER2) / Math.log(OPTIMAL_BATTERY_VOLTAGE3)) + (Math.log(TRAINED_EXP_MULTIPLIER3) / Math.log(OPTIMAL_BATTERY_VOLTAGE3)) + (Math.log(TRAINED_EXP_MULTIPLIER4) / Math.log(OPTIMAL_BATTERY_VOLTAGE4))) / 4);
+
         timer.reset();
-        while(timer.milliseconds() <= (FAST_TURN_WAIT_TIME * TRAINED_EXP_MULTIPLIER4)) {
+        while(timer.milliseconds() <= (FAST_TURN_WAIT_TIME * Math.pow(base, exponent))) {
             telemetry.addLine("Turning");
             telemetry.update();
         }

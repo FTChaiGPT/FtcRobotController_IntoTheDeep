@@ -57,23 +57,24 @@ public class LM2_November_13_SpecimenAuton extends LinearOpMode {
         Trajectory moveSamples = drive.trajectoryBuilder(resetBotPos)
                 .splineToConstantHeading(new Vector2d(48,0), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(45,0), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(45,-4), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(45,-8.5), Math.toRadians(0))
                 .build();
 
         Trajectory pickSpecimenOne = drive.trajectoryBuilder(pickSpecimenPose)
                 .back(-24.5)
                 .build();
 
+        Trajectory lilRealeaseClinchWithWall = drive.trajectoryBuilder(pickSpecimenOne.end())
+                .back(3)
+                .build();
+
         Trajectory releaseClinchWithWall = drive.trajectoryBuilder(resetBotPos)
                 .splineToConstantHeading(new Vector2d(-8,0), Math.toRadians(0))
                 .build();
 
-        Trajectory goBackWithSpecimenTwo = drive.trajectoryBuilder(releaseClinchWithWall.end())
-                .splineToLinearHeading(new Pose2d(-10,-40, Math.toRadians(180)), Math.toRadians(0))
-                .build();
-
-        Trajectory scoreSpecimenTwo = drive.trajectoryBuilder(resetBotPos)
-                .splineToConstantHeading(new Vector2d(6,0), Math.toRadians(0))
+        Trajectory goBackWithSpecimenTwo = drive.trajectoryBuilder(resetBotPos)
+                .splineToConstantHeading(new Vector2d(18,24), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(24,24), Math.toRadians(0))
                 .build();
 
 
@@ -88,7 +89,7 @@ public class LM2_November_13_SpecimenAuton extends LinearOpMode {
         specimen_slides_motor.setPower(0);
 
         specimen_slides_motor.setPower(-0.995);
-        sleep(220);
+        sleep(200);
         drive.followTrajectory(releaseClinchWithRung);
         specimen_slides_motor.setPower(0);
 
@@ -98,23 +99,24 @@ public class LM2_November_13_SpecimenAuton extends LinearOpMode {
         drive.setPoseEstimate(resetBotPos);
         drive.followTrajectory(moveSamples);
 
-        sleep(100);
+        sleep(20);
 
         drive.setPoseEstimate(pickSpecimenPose);
         drive.followTrajectory(pickSpecimenOne);
+        specimen_slides_motor.setPower(0.35);
+        drive.followTrajectory(lilRealeaseClinchWithWall);
         specimen_slides_motor.setPower(0.995);
-        sleep(50);
+        sleep(80);
         specimen_slides_motor.setPower(0.35);
 
         drive.setPoseEstimate(resetBotPos);
         drive.followTrajectory(releaseClinchWithWall);
+        drive.turn(Math.toRadians(180));
+        drive.setPoseEstimate(resetBotPos);
         drive.followTrajectory(goBackWithSpecimenTwo);
 
-        specimen_slides_motor.setPower(-0.2);
-        drive.setPoseEstimate(resetBotPos);
-        drive.followTrajectory(scoreSpecimenTwo);
         specimen_slides_motor.setPower(-0.995);
-        sleep(145);
+        sleep(275);
         specimen_slides_motor.setPower(0);
 
         left_front.setPower(-0.995);

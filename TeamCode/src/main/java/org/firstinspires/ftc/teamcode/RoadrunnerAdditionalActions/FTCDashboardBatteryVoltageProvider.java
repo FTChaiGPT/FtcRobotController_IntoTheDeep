@@ -31,7 +31,6 @@ public class FTCDashboardBatteryVoltageProvider extends LinearOpMode {
         averageBatteryVoltage = (previousBatteryVoltage + battery.getVoltage()) / 2;
 
         while(opModeIsActive()) {
-            telemetry.clearAll();
             telemetry.addData("Battery Voltage: ", battery.getVoltage());
             if (previousBatteryVoltage != battery.getVoltage()) {
                 averageBatteryVoltage = (averageBatteryVoltage + battery.getVoltage()) / 2;

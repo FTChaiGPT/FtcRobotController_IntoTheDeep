@@ -40,8 +40,8 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
 
     private double joyStickMargin = 0.00344;
 
-    private double intake_value = 1;
-    private double outtake_value = -1;
+    private double intake_value = 0.7;
+    private double outtake_value = -0.7;
 
     private static final double COUNTS_PER_MOTOR_REV = 537.7;
     private static final double DRIVE_GEAR_REDUCTION = 1.0;
@@ -148,10 +148,10 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
     public void sampleintake() {
 
         if (gamepad2.left_trigger > 0.078) {
-            intake_servo.setPower(0.995);
+            intake_servo.setPower(intake_value);
         }
         else if (gamepad2.right_trigger > 0.078 && allow_intake_motor_to_spin){
-            intake_servo.setPower(-0.995);
+            intake_servo.setPower(outtake_value);
             if(touchSensor.getValue() == 1 && allow_intake_motor_to_spin && intake_motor.getTargetPosition() <= 0) {
                 intake_touchSensor_timer.reset();
                 allow_intake_motor_to_spin = false;

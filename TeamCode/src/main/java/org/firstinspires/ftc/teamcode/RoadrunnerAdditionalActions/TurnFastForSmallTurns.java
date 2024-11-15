@@ -36,7 +36,7 @@ public class TurnFastForSmallTurns extends LinearOpMode {
 
         double turnRequirement = (batteryVoltageSensor.getVoltage() > 13) ? (((smallFastTurnAmount / 45) < 1) ? 1 : (smallFastTurnAmount / 45)) : (((smallFastTurnAmount / 45) < 1) ? 1 : (smallFastTurnAmount / ((20/45) * TURN_AMT)));
         for (double i = 0; i <= turnRequirement; i++) { //run 1 extra time
-            turnInSection(smallFastTurnAmount, drive, batteryVoltageSensor);
+            turnInSection(smallFastTurnAmount, drive, batteryVoltageSensor, SSTTcurrentPose);
         }
 
         Pose2d SSTTendPose = drive.getPoseEstimate();
@@ -53,8 +53,8 @@ public class TurnFastForSmallTurns extends LinearOpMode {
         telemetry.update();
     }
 
-    public void turnInSection(double smallFastTurnAmount, SampleMecanumDrive drive, VoltageSensor batteryVoltageSensor) {
-        drive.setPoseEstimate(drive.getPoseEstimate());
+    public void turnInSection(double smallFastTurnAmount, SampleMecanumDrive drive, VoltageSensor batteryVoltageSensor, Pose2d SSTTcurrentPose) {
+        drive.setPoseEstimate(new Pose2d(SSTTcurrentPose.getX(), SSTTcurrentPose.getY(), drive.getPoseEstimate().getHeading()));
         turnSectionIterator++;
         if (Math.ceil(turnSectionIterator) == turnSectionIterator) {
             if (smallFastTurnAmount > 0) {

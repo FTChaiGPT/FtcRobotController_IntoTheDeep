@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -18,7 +19,10 @@ public class BatteryDrainer extends OpMode {
     public static double BATTERY_DRAIN_DISTANCE = 60;
     public static double BATTERY_DRAIN_SESSION = 60000;
     public static double BATTERY_DRAIN_REST_TIME = 100000;
+
     ElapsedTime timer = new ElapsedTime();
+
+    VoltageSensor batteryVoltageSensor;
 
     private Pose2d PoseFirst = new Pose2d(0,0,0);
     private Pose2d PoseLast = new Pose2d(0, BATTERY_DRAIN_DISTANCE, 0);
@@ -29,6 +33,8 @@ public class BatteryDrainer extends OpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         drive.setPoseEstimate(PoseFirst);
     }
@@ -43,6 +49,7 @@ public class BatteryDrainer extends OpMode {
 
         while (timer.milliseconds() <= BATTERY_DRAIN_SESSION) {
             telemetry.addLine("Draining");
+            telemetry.addData("Battery Voltage: ", batteryVoltageSensor.getVoltage());
             telemetry.update();
 
         }
@@ -53,6 +60,7 @@ public class BatteryDrainer extends OpMode {
 
         while (timer.milliseconds() <= BATTERY_DRAIN_REST_TIME) {
             telemetry.addLine("Resting");
+            telemetry.addData("Battery Voltage: ", batteryVoltageSensor.getVoltage());
             telemetry.update();
         }
 

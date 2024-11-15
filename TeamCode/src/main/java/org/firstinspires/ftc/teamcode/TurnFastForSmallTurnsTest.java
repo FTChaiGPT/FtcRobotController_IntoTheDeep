@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.RoadrunnerAdditionalActions.*;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Config //Can change FAST_TURN_FOR_SMALL_TURNS_AMOUNT in FTC Dashboard
-@Autonomous(name = "TurnFastBatteryVoltageTimeTuner")
+@Autonomous(name = "TurnFastForSmallTurnsTest")
 public class TurnFastForSmallTurnsTest extends LinearOpMode {
 
     public static long FAST_TURN_FOR_SMALL_TURNS_AMOUNT = 180;

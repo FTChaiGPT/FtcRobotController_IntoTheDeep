@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.RoadrunnerAdditionalActions;
 
-import static android.os.SystemClock.sleep;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -29,7 +27,7 @@ public class TurnFast extends LinearOpMode {
     public static double TRAINED_EXP_MULTIPLIER2 = 0.995875;
     public static double TRAINED_EXP_MULTIPLIER3 = 0.9475;
     public static double TRAINED_EXP_MULTIPLIER4 = 0.6;
-    public static double TRAINED_EXP_MULTIPLIER5 = 1;
+    public static double TRAINED_EXP_MULTIPLIER5 = 1; //TODO: yet to be tested
     public static double TRAINED_EXP_MULTIPLIER6 = 1;
     public static double TRAINED_EXP_MULTIPLIER7 = 1;
 
@@ -48,7 +46,7 @@ public class TurnFast extends LinearOpMode {
         if (drive == null || batteryVoltageSensor == null || fastTurnAmount == 0) return;
 
         drive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            /** drive = new SampleMecanumDrive(hardwareMap); is not applies because that parameter is passed in when the method is used if the object is created in this class itself, it will not allow itself to be used other than as a null object and then will lead to error: NullPointerException, cannot call "{whatever}" on null object reference. **/
+            /** drive = new SampleMecanumDrive(hardwareMap); is not applied because that parameter is passed in when the method is used if the object is created in this class itself, it will not allow itself to be used other than as a null object and then will lead to error: NullPointerException, cannot call "{whatever}" on null object reference. **/
 
         Pose2d STTcurrentPose = new Pose2d(0,0,0);
 
@@ -67,7 +65,7 @@ public class TurnFast extends LinearOpMode {
 
         drive.updatePoseEstimate();
         if (drive.getPoseEstimate() != STTcurrentPose) { //spline adjustment
-            Trajectory fixPose = drive.trajectoryBuilder(drive.getPoseEstimate()).splineToConstantHeading(new Vector2d(STTcurrentPose.getX(), STTcurrentPose.getY()), STTcurrentPose.getHeading()).build();
+            Trajectory fixPose = drive.trajectoryBuilder(drive.getPoseEstimate()).splineToConstantHeading(new Vector2d(STTcurrentPose.getX(), STTcurrentPose.getY()), drive.getPoseEstimate().getHeading()).build();
             drive.followTrajectoryAsync(fixPose);
         }
         telemetry.addLine("Fast Turn Completed!");

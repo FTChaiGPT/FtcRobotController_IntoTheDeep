@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.DriveAdditionalActions.*;
 
+import java.math.BigInteger;
+
 
 @TeleOp(name="LM2_November_13_DriverControlNEW", group = "A_LM1")
 public class LM2_November_13_DriverControlNEW extends OpMode {
@@ -36,7 +38,7 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
     private double driveLeftY_debugger;
     private double driveRightX_debugger;
 
-    private double joyStickMargin = 0.004;
+    private double joyStickMargin = 0.00344;
 
     private double intake_value = 1;
     private double outtake_value = -1;
@@ -63,7 +65,7 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
 
     private String targetPositionNull_Debugger;
 
-    private int slides_rest_position = 20;
+    private int slides_rest_position = 0;
 
     private boolean going_down = false;
 
@@ -74,7 +76,10 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
     private int last_slides_currentPosition = slides_rest_position;
 
     private ElapsedTime intake_timer = new ElapsedTime();
-    private boolean score_once_debug_solution = true;
+
+    /** BigInteger has no limit on how large of a number it can hold and is only limited on how large of a number your computer/device-code-is-run-on can handle. **/
+    private BigInteger score_once_debug_solution = new BigInteger("0");
+    private BigInteger PREVscore_once_debug_solution = score_once_debug_solution;
 
     private ElapsedTime slides_timer = new ElapsedTime();
 
@@ -151,9 +156,7 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
                 intake_touchSensor_timer.reset();
                 allow_intake_motor_to_spin = false;
             }
-        } else {
-            intake_servo.setPower(0);
-        }
+        } else { intake_servo.setPower(0); }
 
         if (allow_intake_motor_to_spin == false && intake_touchSensor_timer.milliseconds() > 175) {
             allow_intake_motor_to_spin = true;
@@ -171,27 +174,28 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
             if (intake_last_dropped) {
                 //drop position near bucket
                 intake_timer.reset();
-                score_once_debug_solution = false;
+                score_once_debug_solution.add(BigInteger.ONE);
                 allow_intake_motor_to_spin = true;
                 robot.stopHoldingDcMotor(intake_motor);
                 intake_motor.setTargetPosition(0);
-                intake_motor.setPower((0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
+                intake_motor.setPower((0.2 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
                 intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             } else {
                 //pick position extended
                 intake_timer.reset();
-                score_once_debug_solution = true;
+                score_once_debug_solution.add(BigInteger.ONE);
                 allow_intake_motor_to_spin = true;
                 robot.stopHoldingDcMotor(intake_motor);
                 intake_motor.setTargetPosition(-192);
-                intake_motor.setPower((0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
+                intake_motor.setPower((0.2 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
                 intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
         intake_was_pressed = gamepad2.left_bumper;
 
-        if (intake_timer.milliseconds() > 250) {
-            robot.holdDcMotor(intake_motor, intake_motor.getTargetPosition(), batteryVoltageSensor);
+        if (PREVscore_once_debug_solution != score_once_debug_solution && (intake_timer.milliseconds() > 250 && ((intake_motor.getTargetPosition() == -195) && intake_motor.getCurrentPosition() < -175 || ((intake_motor.getTargetPosition() == 0) && intake_motor.getCurrentPosition() > -20)))) {
+            robot.holdDcMotor(intake_motor, intake_motor.getTargetPosition(), batteryVoltageSensor, "POWER_MULTIPLIER", 0.5);
+            BigInteger PREVscore_once_debug_solution = score_once_debug_solution;
         }
 
         telemetry.addData("intake_motor | target pos", intake_motor.getTargetPosition());
@@ -353,12 +357,12 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
     @Override
     public void loop() {
 
+        drivetrain();
         samplebucket(); //should be called BEFORE sampleslides()
         sampleslides(); //should be called AFTER samplebucket()
         sampleintake();
         specimenslides();
         climbactuator();
-        drivetrain();
 
     }
 }

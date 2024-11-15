@@ -49,15 +49,15 @@ public class LM2_November_13_SpecimenAuton extends LinearOpMode {
                 .build();
 
         Trajectory moveBehindSamples = drive.trajectoryBuilder(resetBotPos)
-                .splineToConstantHeading(new Vector2d(0,-24), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(0,-23), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(16,-24), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(33,-35), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(33,-38), Math.toRadians(0))
                 .build();
 
         Trajectory moveSamples = drive.trajectoryBuilder(resetBotPos)
                 .splineToConstantHeading(new Vector2d(48,0), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(45,0), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(45,-4.25), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(45,-4), Math.toRadians(0))
                 .build();
 
         Trajectory pickSpecimenOne = drive.trajectoryBuilder(pickSpecimenPose)
@@ -69,11 +69,11 @@ public class LM2_November_13_SpecimenAuton extends LinearOpMode {
                 .build();
 
         Trajectory goBackWithSpecimenTwo = drive.trajectoryBuilder(releaseClinchWithWall.end())
-                .splineToLinearHeading(new Pose2d(-3,-35, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(-10,-40, Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
         Trajectory scoreSpecimenTwo = drive.trajectoryBuilder(resetBotPos)
-                .splineToConstantHeading(new Vector2d(2,0), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(6,0), Math.toRadians(0))
                 .build();
 
 

@@ -71,7 +71,7 @@ public class LM2_November_13_DriverControlOLD extends OpMode {
 
     private String targetPositionNull_Debugger;
 
-    private int slides_rest_position = 20;
+    private int slides_rest_position = 0;
 
     private boolean going_down = false;
 

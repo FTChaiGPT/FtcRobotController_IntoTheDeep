@@ -20,7 +20,6 @@ public class TargetPositionHolder extends LinearOpMode {
     public void runOpMode() {/*--EMPTY--*/}
 
     private volatile boolean isMotorHolding = false;
-    private volatile boolean callShutdown = false;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private double power;
 
@@ -55,22 +54,12 @@ public class TargetPositionHolder extends LinearOpMode {
 
             isMotorHolding = true;
 
-
-            if (executor.isShutdown()) executor = Executors.newSingleThreadExecutor();
-
             Future<?> motorTask = executor.submit(() -> {
 
                 motor.setTargetPosition((int) holdPosition);
 
                 try {
                     while (isMotorHolding) {
-
-                        if (callShutdown) { /** for shutdown **/
-                            stopHoldingDcMotor(motor);
-                            clearTasks();
-                            executor.shutdown();
-                            break;
-                        }
 
                         power = setAppropriatePower(MAX_POWER, LOWER_MAX_POWER, HALF_POWER, MOD_POWER, LOW_POWER, MIN_POWER, LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER, batteryVoltageSensor, motor);
 
@@ -150,9 +139,9 @@ public class TargetPositionHolder extends LinearOpMode {
     }
 
     public void killExecutor(DcMotor motor, VoltageSensor batteryVoltageSensor) {
-        callShutdown = true;
-        holdDcMotor(motor, motor.getTargetPosition(), batteryVoltageSensor);
-
+        stopHoldingDcMotor(motor);
+        clearTasks();
+        executor.shutdown();
     }
 
     public void stopHoldingDcMotor(DcMotor motor) {
@@ -168,16 +157,16 @@ public class TargetPositionHolder extends LinearOpMode {
                                       double LOWER_MAX_POWER,
                                       double HALF_POWER,
                                       double MOD_POWER,
-          /* sets motor power */      double LOW_POWER,
+         /* gets motor powers */      double LOW_POWER,
                                       double MIN_POWER,
                                       double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER,
                                       VoltageSensor batteryVoltageSensor,
                                       DcMotor motor)
-    /* loop start >>> */ {
+    /* start of loop >>> */ {
         double powerAmount;
         double positionDifference = Math.abs(motor.getTargetPosition() - motor.getCurrentPosition());
         double currentBatteryVoltage = batteryVoltageSensor.getVoltage();
-        //method of finding powerAmount
+        //evaluates motor powers
         if (positionDifference <= TICKS_PER_REV * (35 / TRAINED_TICKS_PER_REV)) {
             if (currentBatteryVoltage <= 11.75) {
                 powerAmount = LOW_POWER;

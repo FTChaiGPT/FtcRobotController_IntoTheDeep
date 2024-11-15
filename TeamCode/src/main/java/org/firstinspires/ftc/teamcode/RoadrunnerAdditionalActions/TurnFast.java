@@ -48,8 +48,9 @@ public class TurnFast extends LinearOpMode {
         drive.setDrivePower(new Pose2d(0, 0, 1));
         //sleep(FAST_TURN_WAIT_TIME * ((long) OPTIMAL_BATTERY_VOLTAGE / (long) batteryVoltageSensor.getVoltage())); //wait time * (primal voltage / actual voltage)
 
-        double base = ((OPTIMAL_BATTERY_VOLTAGE1 + OPTIMAL_BATTERY_VOLTAGE2 + OPTIMAL_BATTERY_VOLTAGE3 + OPTIMAL_BATTERY_VOLTAGE4) / 4) / batteryVoltageSensor.getVoltage();
-        double exponent = (((Math.log(TRAINED_EXP_MULTIPLIER1) / Math.log(OPTIMAL_BATTERY_VOLTAGE1)) + (Math.log(TRAINED_EXP_MULTIPLIER2) / Math.log(OPTIMAL_BATTERY_VOLTAGE3)) + (Math.log(TRAINED_EXP_MULTIPLIER3) / Math.log(OPTIMAL_BATTERY_VOLTAGE3)) + (Math.log(TRAINED_EXP_MULTIPLIER4) / Math.log(OPTIMAL_BATTERY_VOLTAGE4))) / 4);
+        double currentVoltage = batteryVoltageSensor.getVoltage();
+        double base = ((OPTIMAL_BATTERY_VOLTAGE1 + OPTIMAL_BATTERY_VOLTAGE2 + OPTIMAL_BATTERY_VOLTAGE3 + OPTIMAL_BATTERY_VOLTAGE4) / 4) / currentVoltage;
+        double exponent = (((Math.log(TRAINED_EXP_MULTIPLIER1) / Math.log(OPTIMAL_BATTERY_VOLTAGE1 / currentVoltage)) + (Math.log(TRAINED_EXP_MULTIPLIER2) / Math.log(OPTIMAL_BATTERY_VOLTAGE3 / currentVoltage)) + (Math.log(TRAINED_EXP_MULTIPLIER3) / Math.log(OPTIMAL_BATTERY_VOLTAGE3 / currentVoltage)) + (Math.log(TRAINED_EXP_MULTIPLIER4) / Math.log(OPTIMAL_BATTERY_VOLTAGE4 / currentVoltage))) / 4);
 
         timer.reset();
         while(timer.milliseconds() <= (FAST_TURN_WAIT_TIME * Math.pow(base, exponent))) {

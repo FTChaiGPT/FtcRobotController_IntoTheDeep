@@ -30,6 +30,7 @@ public class TargetPositionHolder extends LinearOpMode {
     public volatile double holdPower = 0; /** power set once motor has reached its TargetPosition **/
     public volatile double marginOfError = 5 ;
     public volatile double powerMultiplier = 1;
+    public volatile double tuningPowerMultiplier = 1; /**power multiplier that adjustments are made at**/
 
     private volatile Map<DcMotor, Future<?>> motorTasks = new HashMap<>(); /** HashMap to create instances of classes **/ //holds all Futures of the ExecutorService
     /** Future is used to handle specific parts of the ExecutorService instead of only handling all or none **/
@@ -43,16 +44,22 @@ public class TargetPositionHolder extends LinearOpMode {
             holdPower = varargsData[2];
             marginOfError = varargsData[3];
             powerMultiplier = varargsData[4];
+            tuningPowerMultiplier = varargsData[5];
 
             double MAX_POWER = ((1 / gearRatio) == 1) ? 1 : Math.min(1 / gearRatio, 1);                                      /** ternary operator **/
             double LOWER_MAX_POWER = ((MAX_POWER / 1.3) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier);  /** ternary operator **/
-            double HALF_POWER = ((MAX_POWER / 2) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier);         /** ternary operator **/
-            double MOD_POWER = ((MAX_POWER / 3.5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier);        /** ternary operator **/
-            double LOW_POWER = ((MAX_POWER / 8) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier);          /** ternary operator **/
-            double MIN_POWER = ((MAX_POWER / 9.5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier);        /** ternary operator **/
-            double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER = ((MAX_POWER / 5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier); /** ternary operator **/
+            double HALF_POWER = ((MAX_POWER / 2) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 2) * powerMultiplier);         /** ternary operator **/
+            double MOD_POWER = ((MAX_POWER / 3.5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 3.5) * powerMultiplier);        /** ternary operator **/
+            double LOW_POW = ((MAX_POWER / 8) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 8) * powerMultiplier);          /** ternary operator **/
+            double MIN_POW = ((MAX_POWER / 9.5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 9.5) * powerMultiplier);        /** ternary operator **/
+            double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW = ((MAX_POWER / 5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier); /** ternary operator **/
 
-            isMotorHolding = true;
+            double LOW_POWER = (LOW_POW * tuningPowerMultiplier) > 1 ? 1 : (LOW_POW * tuningPowerMultiplier);
+            double MIN_POWER = (MIN_POW * tuningPowerMultiplier) > 1 ? 1 : (MIN_POW * tuningPowerMultiplier);
+            double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER = (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier) > 1 ? 1 : (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier);
+
+
+        isMotorHolding = true;
 
             Future<?> motorTask = executor.submit(() -> {
 
@@ -98,6 +105,7 @@ public class TargetPositionHolder extends LinearOpMode {
         double holdPower = 0.0;
         double marginOfError = 5.0;
         double powerMultiplier = 1.0;
+        double tuningPowerMultiplier = 1.0;
 
         for (int i = 0; i < varargs.length; i += 2) {
             if (varargs[i] instanceof String && varargs[i + 1] instanceof Number) {
@@ -121,13 +129,15 @@ public class TargetPositionHolder extends LinearOpMode {
                     case "POWER_MULTIPLIER":
                         powerMultiplier = value;
                         break;
+                    case "TUNING_POWER_MULTIPLIER":
+                        tuningPowerMultiplier = value;
                     default:
                         //does nothing for unknown keys.
                         break;
                 }
             }
         }
-        return new double[] {gearRatio, ticksPerRev, holdPower, marginOfError, powerMultiplier};
+        return new double[] {gearRatio, ticksPerRev, holdPower, marginOfError, powerMultiplier, tuningPowerMultiplier};
     }
 
     public void clearFutureOfDcMotor(DcMotor motor) {

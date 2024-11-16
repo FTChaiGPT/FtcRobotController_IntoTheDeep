@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Config
-@TeleOp (name = "BatteryDrainer") //USE FOR GETTING BATTERY LOW FOR TURNFAST TUNING
-public class BatteryDrainer extends OpMode {
+@TeleOp (name = "AutoBatteryDrainer") //USE FOR GETTING BATTERY LOW FOR TURNFAST TUNING
+public class AutomaticBatteryDrainer extends OpMode {
 
     public static double BATTERY_DRAIN_DISTANCE = 60;
     public static double BATTERY_DRAIN_SESSION = 60000;

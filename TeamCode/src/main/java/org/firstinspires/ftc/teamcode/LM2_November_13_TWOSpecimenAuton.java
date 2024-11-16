@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@Disabled
+//@Disabled
 @Autonomous (name = "LM2_November_13_TWOSpecimenAuton", group = "A_LM1")
 public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
 

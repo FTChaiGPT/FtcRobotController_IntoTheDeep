@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+
+import org.firstinspires.ftc.teamcode.DriveAdditionalActions.*;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 //import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -21,9 +24,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 
 
-@Autonomous (name = "LM2SampleAuton", group = "A-LM2")
+@Autonomous (name = "(OLD)LM2SampleAuton", group = "A-LM2")
 
-public class LM2_November13_SampleAuton extends LinearOpMode {
+public class OLDLM2_November_13_SampleAuton extends LinearOpMode {
 
     private DcMotor left_front;
     private DcMotor left_back;
@@ -35,6 +38,9 @@ public class LM2_November13_SampleAuton extends LinearOpMode {
     private Servo bucket_servo;
     private DcMotor intake_motor;
     private DcMotor hang_motor;
+
+    private VoltageSensor batteryVoltageSensor;
+
 //    TurnFast robot = new TurnFast();
 //    private VoltageSensor batteryVoltageSensor;
 //    Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -70,9 +76,12 @@ public class LM2_November13_SampleAuton extends LinearOpMode {
         hang_motor = hardwareMap.get(DcMotor.class, "hang_motor");
         hang_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-//        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        TargetPositionHolder robot = new TargetPositionHolder();
+
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         Pose2d resetBotPos = new Pose2d(0, 0, Math.toRadians(0));
 
@@ -100,7 +109,16 @@ public class LM2_November13_SampleAuton extends LinearOpMode {
                 .forward(7)
                 .build();
         Trajectory PickSample14 = drive.trajectoryBuilder(resetBotPos)
-                .splineToConstantHeading(new Vector2d(73, 13), Math.toRadians(0))
+                //.splineToConstantHeading(new Vector2d(76, 12.5), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(30,0), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(45,12), Math.toRadians(0))
+
+                //.lineToSplineHeading(new Pose2d(72, 13, Math.toRadians(135)))
+                .build();
+
+        Trajectory PickSample15 = drive.trajectoryBuilder(resetBotPos)
+                //.splineToConstantHeading(new Vector2d(76, 12.5), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50,12, Math.toRadians(-45)), Math.toRadians(0))
                 //.lineToSplineHeading(new Pose2d(72, 13, Math.toRadians(135)))
                 .build();
 
@@ -121,24 +139,26 @@ public class LM2_November13_SampleAuton extends LinearOpMode {
         drive.setPoseEstimate(resetBotPos);
         drive.followTrajectory(Position2);
         //robot.turnFast((long)-45.5, drive, batteryVoltageSensor, telemetry);
-        drive.turn(Math.toRadians(-50));
+        drive.turn(Math.toRadians(-51));
         drive.setPoseEstimate(resetBotPos);
         drive.followTrajectory(Position3);
         outtake_slides_motor.setPower(-0.995);
-        sleep(1950);
+        //robot.holdDcMotor(outtake_slides_motor, );
+        sleep(2000);
         bucket_servo.setPosition(0.995);
         sleep(1000);
         drive.setPoseEstimate(resetBotPos);
-        outtake_slides_motor.setPower(0.995);
+        outtake_slides_motor.setPower(1);
         bucket_servo.setPosition(0.25);
-        sleep(1600);
+        sleep(1700);
+        outtake_slides_motor.setPower(0);
         //intake first sample
         intake_motor.setPower(-0.2);
         sleep(1500);
         intake_motor.setPower(0);
         drive.followTrajectory(SplinetoSample1);
         //robot.turnFast(35, drive, batteryVoltageSensor, telemetry);
-        drive.turn(Math.toRadians(37));
+        drive.turn(Math.toRadians(41));
         intake_servo.setPower(-0.995);
         sleep(1700);
         intake_motor.setPower(0.2);
@@ -149,27 +169,29 @@ public class LM2_November13_SampleAuton extends LinearOpMode {
         intake_servo.setPower(0);
 
         //robot.turnFast(-25, drive, batteryVoltageSensor, telemetry);
-        drive.turn(Math.toRadians(-25));
+        drive.turn(Math.toRadians(-27));
         drive.followTrajectory(PickSample12);
         outtake_slides_motor.setPower(-0.995);
-        sleep(1800);
+        sleep(2000);
         bucket_servo.setPosition(0.995);
         sleep(1000);
         drive.setPoseEstimate(resetBotPos);
         outtake_slides_motor.setPower(0.995);
         bucket_servo.setPosition(0.25);
         sleep(1700);
+        outtake_slides_motor.setPower(0);
         //level 1 ascent
-        drive.followTrajectory(PickSample14);
-        drive.turn(Math.toRadians(135));
-        //robot.turnFast(135, drive, batteryVoltageSensor, telemetry);
+//        drive.followTrajectory(PickSample14);
+//        drive.followTrajectory(PickSample15);
+//        drive.turn(Math.toRadians(135));
+//        //robot.turnFast(135, drive, batteryVoltageSensor, telemetry);
+//        hang_motor.setPower(0.995);
+//        sleep(3000);
+//        hang_motor.setPower(0);
+//        hang_motor.setPower(-0.995);
+//        sleep(3000);
+//        hang_motor.setPower(0);
 
-        hang_motor.setPower(-0.995);
-        sleep(3000);
-        hang_motor.setPower(0);
-        hang_motor.setPower(0.995);
-        sleep(3000);
-        hang_motor.setPower(0);
 
 
     }

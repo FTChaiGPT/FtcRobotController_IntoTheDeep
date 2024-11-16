@@ -194,7 +194,7 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
         intake_was_pressed = gamepad2.left_bumper;
 
         if (PREVscore_once_debug_solution != score_once_debug_solution && (intake_timer.milliseconds() > 250 && ((intake_motor.getTargetPosition() == -195) && intake_motor.getCurrentPosition() < -175 || ((intake_motor.getTargetPosition() == 0) && intake_motor.getCurrentPosition() > -20)))) {
-            robot.holdDcMotor(intake_motor, intake_motor.getTargetPosition(), batteryVoltageSensor, "POWER_MULTIPLIER", 0.5);
+            robot.holdDcMotor(intake_motor, intake_motor.getTargetPosition(), batteryVoltageSensor, "POWER_MULTIPLIER", 0.2, "TUNING_POWER_MULTIPLIER", 0.5);
             BigInteger PREVscore_once_debug_solution = score_once_debug_solution;
         }
 

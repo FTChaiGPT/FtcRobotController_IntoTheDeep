@@ -49,12 +49,13 @@ public class TargetPositionHolder extends LinearOpMode {
             double MAX_POWER = ((1 / gearRatio) == 1) ? 1 : Math.min(1 / gearRatio, 1);                                      /** ternary operator **/
             double LOWER_MAX_POWER = ((MAX_POWER / 1.3) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier);  /** ternary operator **/
             double HALF_POWER = ((MAX_POWER / 2) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 2) * powerMultiplier);         /** ternary operator **/
-            double MOD_POWER = ((MAX_POWER / 3.5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 3.5) * powerMultiplier);        /** ternary operator **/
+            double MOD_POW = ((MAX_POWER / 5.5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 3.5) * powerMultiplier);        /** ternary operator **/
             double LOW_POW = ((MAX_POWER / 8) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 8) * powerMultiplier);          /** ternary operator **/
             double MIN_POW = ((MAX_POWER / 9.5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 9.5) * powerMultiplier);        /** ternary operator **/
             double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW = ((MAX_POWER / 5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier); /** ternary operator **/
 
-            double LOW_POWER = (LOW_POW * tuningPowerMultiplier) > 1 ? 1 : (LOW_POW * tuningPowerMultiplier);
+        double MOD_POWER = (MOD_POW * tuningPowerMultiplier) > 1 ? 1 : (MOD_POW * tuningPowerMultiplier);
+        double LOW_POWER = (LOW_POW * tuningPowerMultiplier) > 1 ? 1 : (LOW_POW * tuningPowerMultiplier);
             double MIN_POWER = (MIN_POW * tuningPowerMultiplier) > 1 ? 1 : (MIN_POW * tuningPowerMultiplier);
             double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER = (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier) > 1 ? 1 : (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier);
 
@@ -185,16 +186,16 @@ public class TargetPositionHolder extends LinearOpMode {
                 powerAmount = LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER;
             }
             else powerAmount = MIN_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (150 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (200 / TRAINED_TICKS_PER_REV)) {
             if (currentBatteryVoltage <= 11.75) {
                 powerAmount = LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER;
             }
             else powerAmount = LOW_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (370 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (700 / TRAINED_TICKS_PER_REV)) {
             powerAmount = MOD_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (900 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (1000 / TRAINED_TICKS_PER_REV)) {
             powerAmount = HALF_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (2000 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (2500 / TRAINED_TICKS_PER_REV)) {
             powerAmount = LOWER_MAX_POWER;
         }
         else powerAmount = MAX_POWER;

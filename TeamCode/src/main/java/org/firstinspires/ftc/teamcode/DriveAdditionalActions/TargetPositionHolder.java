@@ -38,63 +38,55 @@ public class TargetPositionHolder extends LinearOpMode {
 
     public void holdDcMotor(DcMotor motor, @NonNull double holdPosition, VoltageSensor batteryVoltageSensor, Object... varargs) {
 
-            double[] varargsData = processVarargs(varargs);
-            gearRatio = varargsData[0];
-            TICKS_PER_REV = varargsData[1];
-            holdPower = varargsData[2];
-            marginOfError = varargsData[3];
-            powerMultiplier = varargsData[4];
-            tuningPowerMultiplier = varargsData[5];
+        double[] varargsData = processVarargs(varargs);
+        gearRatio = varargsData[0];
+        TICKS_PER_REV = varargsData[1];
+        holdPower = varargsData[2];
+        marginOfError = varargsData[3];
+        powerMultiplier = varargsData[4];
+        tuningPowerMultiplier = varargsData[5];
 
-            double MAX_POWER = ((1 / gearRatio) == 1) ? 1 : Math.min(1 / gearRatio, 1);                                      /** ternary operator **/
-            double LOWER_MAX_POWER = ((MAX_POWER / 1.3) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier);  /** ternary operator **/
-            double HALF_POWER = ((MAX_POWER / 2) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 2) * powerMultiplier);         /** ternary operator **/
-            double MOD_POW = ((MAX_POWER / 5.5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 3.5) * powerMultiplier);        /** ternary operator **/
-            double LOW_POW = ((MAX_POWER / 8) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 8) * powerMultiplier);          /** ternary operator **/
-            double MIN_POW = ((MAX_POWER / 9.5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 9.5) * powerMultiplier);        /** ternary operator **/
-            double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW = ((MAX_POWER / 5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier); /** ternary operator **/
+        double MAX_POWER = ((1 / gearRatio) == 1) ? 1 : Math.min(1 / gearRatio, 1);                                                                                                 /** ternary operator **/
+        double LOWER_MAX_POWER = ((MAX_POWER / 1.3) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 1.3) * powerMultiplier);  /** ternary operator **/
+        double HALF_POWER = ((MAX_POWER / 5.5) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 2) * powerMultiplier);         /** ternary operator **/
+        double MOD_POW = ((MAX_POWER / 7.5) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 3.5) * powerMultiplier);          /** ternary operator **/
+        double LOW_POW = ((MAX_POWER / 9) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 8) * powerMultiplier);              /** ternary operator **/
+        double MIN_POW = ((MAX_POWER / 10) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 9.5) * powerMultiplier);           /** ternary operator **/
+        double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW = ((MAX_POWER / 5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier);                                       /** ternary operator **/
 
-        double MOD_POWER = (MOD_POW * tuningPowerMultiplier) > 1 ? 1 : (MOD_POW * tuningPowerMultiplier);
-        double LOW_POWER = (LOW_POW * tuningPowerMultiplier) > 1 ? 1 : (LOW_POW * tuningPowerMultiplier);
-            double MIN_POWER = (MIN_POW * tuningPowerMultiplier) > 1 ? 1 : (MIN_POW * tuningPowerMultiplier);
-            double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER = (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier) > 1 ? 1 : (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier);
+        /** tuningPowerMultiplier is used after powerMultiplier is used as well **/
+        double MOD_POWER = (MOD_POW * tuningPowerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : (MOD_POW * tuningPowerMultiplier);                    /** ternary operator **/
+        double LOW_POWER = (LOW_POW * tuningPowerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : (LOW_POW * tuningPowerMultiplier);                    /** ternary operator **/
+        double MIN_POWER = (MIN_POW * tuningPowerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : (MIN_POW * tuningPowerMultiplier);                /** ternary operator **/
+        double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER = (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier) > 1 ? 1 : (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier);/** ternary operator **/
 
 
         isMotorHolding = true;
 
-            Future<?> motorTask = executor.submit(() -> {
+        Future<?> motorTask = executor.submit(() -> {
 
-                motor.setTargetPosition((int) holdPosition);
+            motor.setTargetPosition((int) holdPosition);
 
-                try {
-                    while (isMotorHolding) {
+            try {
+                while (isMotorHolding) {
 
-                        power = setAppropriatePower(MAX_POWER, LOWER_MAX_POWER, HALF_POWER, MOD_POWER, LOW_POWER, MIN_POWER, LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER, batteryVoltageSensor, motor);
+                    power = setAppropriatePower(MAX_POWER, LOWER_MAX_POWER, HALF_POWER, MOD_POWER, LOW_POWER, MIN_POWER, LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER, batteryVoltageSensor, motor);
 
-                        if (holdPosition >= 0) {
-                            if (Math.floor(motor.getCurrentPosition()) > (motor.getTargetPosition() - marginOfError) && Math.floor(motor.getCurrentPosition()) < (motor.getTargetPosition() + marginOfError)) {
-                                motor.setPower(holdPower);
-                            } else {
-                                motor.setPower(power);
-                                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            }
-                        } else if (holdPosition < 0) {
-                            if (Math.ceil(motor.getCurrentPosition()) > (motor.getTargetPosition() - marginOfError) && Math.ceil(motor.getCurrentPosition()) < (motor.getTargetPosition() + marginOfError)) {
-                                motor.setPower(holdPower);
-                            } else {
-                                motor.setPower(power);
-                                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            }
-                        }
+                    if (Math.floor(Math.abs(motor.getCurrentPosition())) > (Math.abs(motor.getTargetPosition()) - marginOfError) && Math.floor(Math.abs(motor.getCurrentPosition())) < (Math.abs(motor.getTargetPosition()) + marginOfError)) {
+                        motor.setPower(holdPower);
+                    } else {
+                        motor.setPower(power);
+                        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     }
-                } catch (Exception e) {
-                    Thread.currentThread().interrupt();
-                } finally { clearFutureOfDcMotor(motor); }
+                }
+            } catch (Exception e) {
+                Thread.currentThread().interrupt();
+            } finally { clearFutureOfDcMotor(motor); }
 
-            });
-            if (motorTasks.containsKey(motor) == false) {
-                motorTasks.put(motor, motorTask); //motor task is added to MotorTasks
-            }
+        });
+        if (motorTasks.containsKey(motor) == false) {
+            motorTasks.put(motor, motorTask); //motor task is added to MotorTasks
+        }
 
     }
 
@@ -168,16 +160,17 @@ public class TargetPositionHolder extends LinearOpMode {
                                       double LOWER_MAX_POWER,
                                       double HALF_POWER,
                                       double MOD_POWER,
-         /* gets motor powers */      double LOW_POWER,
+            /* gets motor powers */      double LOW_POWER,
                                       double MIN_POWER,
                                       double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER,
                                       VoltageSensor batteryVoltageSensor,
                                       DcMotor motor)
-    /* start of loop >>> */ {
+        /* start of loop >>> */ {
         double powerAmount;
         double positionDifference = Math.abs(motor.getTargetPosition() - motor.getCurrentPosition());
         double currentBatteryVoltage = batteryVoltageSensor.getVoltage();
         //evaluates motor powers
+        /** Tuneable values **/
         if (positionDifference <= TICKS_PER_REV * (35 / TRAINED_TICKS_PER_REV)) {
             if (currentBatteryVoltage <= 11.75) {
                 powerAmount = LOW_POWER;
@@ -186,14 +179,14 @@ public class TargetPositionHolder extends LinearOpMode {
                 powerAmount = LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER;
             }
             else powerAmount = MIN_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (200 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (500 / TRAINED_TICKS_PER_REV)) {
             if (currentBatteryVoltage <= 11.75) {
                 powerAmount = LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER;
             }
             else powerAmount = LOW_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (700 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (900 / TRAINED_TICKS_PER_REV)) {
             powerAmount = MOD_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (1000 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (1200 / TRAINED_TICKS_PER_REV)) {
             powerAmount = HALF_POWER;
         } else if (positionDifference <= TICKS_PER_REV * (2500 / TRAINED_TICKS_PER_REV)) {
             powerAmount = LOWER_MAX_POWER;

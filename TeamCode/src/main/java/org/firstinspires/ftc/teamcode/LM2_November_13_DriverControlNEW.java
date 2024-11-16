@@ -41,7 +41,7 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
     private double joyStickMargin = 0.00344;
 
     private double intake_value = 0.7;
-    private double outtake_value = -0.7;
+    private double outtake_value = -0.1875;
 
     private static final double COUNTS_PER_MOTOR_REV = 537.7;
     private static final double DRIVE_GEAR_REDUCTION = 1.0;
@@ -148,10 +148,10 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
     public void sampleintake() {
 
         if (gamepad2.left_trigger > 0.078) {
-            intake_servo.setPower(intake_value);
+            intake_servo.setPower(outtake_value);
         }
         else if (gamepad2.right_trigger > 0.078 && allow_intake_motor_to_spin){
-            intake_servo.setPower(outtake_value);
+            intake_servo.setPower(intake_value);
             if(touchSensor.getValue() == 1 && allow_intake_motor_to_spin && intake_motor.getTargetPosition() <= 0) {
                 intake_touchSensor_timer.reset();
                 allow_intake_motor_to_spin = false;
@@ -178,8 +178,8 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
                 allow_intake_motor_to_spin = true;
                 robot.stopHoldingDcMotor(intake_motor);
                 intake_motor.setTargetPosition(0);
-                intake_motor.setPower((0.2 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
-                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                intake_motor.setPower((0.2 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
+//                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             } else {
                 //pick position extended
                 intake_timer.reset();
@@ -187,14 +187,14 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
                 allow_intake_motor_to_spin = true;
                 robot.stopHoldingDcMotor(intake_motor);
                 intake_motor.setTargetPosition(-190);
-                intake_motor.setPower((0.2 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
-                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                intake_motor.setPower((0.2 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
+//                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
         intake_was_pressed = gamepad2.left_bumper;
 
-        if (PREVscore_once_debug_solution != score_once_debug_solution && (intake_timer.milliseconds() > 250 && ((intake_motor.getTargetPosition() == -195) && intake_motor.getCurrentPosition() < -175 || ((intake_motor.getTargetPosition() == 0) && intake_motor.getCurrentPosition() > -20)))) {
-            robot.holdDcMotor(intake_motor, intake_motor.getTargetPosition(), batteryVoltageSensor, "POWER_MULTIPLIER", 0.2, "TUNING_POWER_MULTIPLIER", 0.5);
+        if (PREVscore_once_debug_solution != score_once_debug_solution && (intake_timer.milliseconds() < 250 && ((intake_motor.getTargetPosition() == -195) && intake_motor.getCurrentPosition() < -175 || ((intake_motor.getTargetPosition() == 0) && intake_motor.getCurrentPosition() > -20)))) {
+            robot.holdDcMotor(intake_motor, intake_motor.getTargetPosition(), batteryVoltageSensor, "POWER_MULTIPLIER", 0.175, "TUNING_POWER_MULTIPLIER", 0.85);
             BigInteger PREVscore_once_debug_solution = score_once_debug_solution;
         }
 
@@ -271,7 +271,7 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
     public void sampleslides() {
 
         if (gamepad2.right_stick_y < -0.25) {
-            targetPosition = -5100;
+            targetPosition = -5200;
             targetPositionNull_Debugger = String.valueOf(targetPosition); //prevents null value from being set in setTargetPosition
             if (targetPositionNull_Debugger != null) {
                 outtake_slides_motor.setTargetPosition(targetPosition);
@@ -350,7 +350,7 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
     public void stop() {//                                         |
         robot.killExecutor(intake_motor, batteryVoltageSensor);//  |`---- ⚠ Failing to add this chunk of code will result in spontaneous
     }//                                                           _|    holding of motor(s) upon initialization and will require turning
-     //                                                                 the bot off & on or re-downloading. ⚠
+    //                                                                 the bot off & on or re-downloading. ⚠
 
 
 

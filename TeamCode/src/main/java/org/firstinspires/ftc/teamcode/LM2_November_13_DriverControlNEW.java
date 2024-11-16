@@ -65,7 +65,7 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
 
     private String targetPositionNull_Debugger;
 
-    private int slides_rest_position = 20;
+    private int slides_rest_position = 50;
 
     private boolean going_down = false;
 
@@ -186,7 +186,7 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
                 score_once_debug_solution.add(BigInteger.ONE);
                 allow_intake_motor_to_spin = true;
                 robot.stopHoldingDcMotor(intake_motor);
-                intake_motor.setTargetPosition(-192);
+                intake_motor.setTargetPosition(-190);
                 intake_motor.setPower((0.2 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
                 intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }

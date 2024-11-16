@@ -75,8 +75,8 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
                 .build();
 
         Trajectory goBackWithSpecimenTwo = drive.trajectoryBuilder(resetBotPos)
-                .splineToConstantHeading(new Vector2d(18,24), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(24,24), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(18,26), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(25.75,26), Math.toRadians(0))
                 .build();
 
 
@@ -118,7 +118,7 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
         drive.followTrajectory(goBackWithSpecimenTwo);
 
         specimen_slides_motor.setPower(-0.995);
-        sleep(275);
+        sleep(300);
         specimen_slides_motor.setPower(0);
 
         left_front.setPower(-0.995);

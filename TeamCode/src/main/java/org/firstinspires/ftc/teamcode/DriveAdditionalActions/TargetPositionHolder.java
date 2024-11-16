@@ -36,7 +36,7 @@ public class TargetPositionHolder extends LinearOpMode {
     /** Future is used to handle specific parts of the ExecutorService instead of only handling all or none **/
 
 
-    public void holdDcMotor(DcMotor motor, @NonNull double holdPosition, VoltageSensor batteryVoltageSensor, Object... varargs) {
+    public void holdDcMotor(@NonNull DcMotor motor, @NonNull double holdPosition, @NonNull VoltageSensor batteryVoltageSensor, Object... varargs) {
 
         double[] varargsData = processVarargs(varargs);
         gearRatio = varargsData[0];

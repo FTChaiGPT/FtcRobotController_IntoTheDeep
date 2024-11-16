@@ -85,6 +85,8 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
 
     private ElapsedTime gametime = new ElapsedTime();
 
+    private boolean intake_arm_hold = false;
+
     private boolean prev_gamepad2a = false;
     private boolean cur_gamepad2a = false;
 
@@ -170,33 +172,37 @@ public class LM2_November_13_DriverControlNEW extends OpMode {
 
         if (gamepad2.left_bumper && !intake_was_pressed) {
             intake_last_dropped = !intake_last_dropped;
+            robot.stopHoldingDcMotor(intake_motor);
 
             if (intake_last_dropped) {
                 //drop position near bucket
                 intake_timer.reset();
-                score_once_debug_solution.add(BigInteger.ONE);
+                intake_arm_hold = true;
                 allow_intake_motor_to_spin = true;
-                robot.stopHoldingDcMotor(intake_motor);
-                intake_motor.setTargetPosition(0);
-//                intake_motor.setPower((0.2 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
-//                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intake_motor.setTargetPosition(-190);
+                intake_motor.setPower((0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
+                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             } else {
                 //pick position extended
                 intake_timer.reset();
-                score_once_debug_solution.add(BigInteger.ONE);
+                intake_arm_hold = true;
                 allow_intake_motor_to_spin = true;
-                robot.stopHoldingDcMotor(intake_motor);
                 intake_motor.setTargetPosition(-190);
-//                intake_motor.setPower((0.2 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
-//                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intake_motor.setPower((0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
+                intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
         intake_was_pressed = gamepad2.left_bumper;
 
-        if (PREVscore_once_debug_solution != score_once_debug_solution && (intake_timer.milliseconds() < 250 && ((intake_motor.getTargetPosition() == -195) && intake_motor.getCurrentPosition() < -175 || ((intake_motor.getTargetPosition() == 0) && intake_motor.getCurrentPosition() > -20)))) {
-            robot.holdDcMotor(intake_motor, intake_motor.getTargetPosition(), batteryVoltageSensor, "POWER_MULTIPLIER", 0.175, "TUNING_POWER_MULTIPLIER", 0.85);
-            BigInteger PREVscore_once_debug_solution = score_once_debug_solution;
+        if(intake_arm_hold && intake_last_dropped && intake_motor.getCurrentPosition() > -100 && intake_timer.milliseconds() > 50) {
+            robot.holdDcMotor(intake_motor, intake_motor.getTargetPosition(), batteryVoltageSensor, "POWER_MULTIPLIER", 1.5);
+            intake_arm_hold = false;
         }
+        else if (intake_arm_hold && !intake_last_dropped && intake_motor.getCurrentPosition() < -100 && intake_timer.milliseconds() > 50) {
+            robot.holdDcMotor(intake_motor, intake_motor.getTargetPosition(), batteryVoltageSensor, "POWER_MULTIPLIER", 1.5);
+            intake_arm_hold = false;
+        }
+
 
         telemetry.addData("intake_motor | target pos", intake_motor.getTargetPosition());
         telemetry.addData("intake_motor | current pos", intake_motor.getCurrentPosition());

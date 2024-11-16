@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -8,13 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Disabled
-@TeleOp(name="LM2_November_13_DriverControlBACKUP", group = "A_LM1")
-public class LM2_November_13_DriverControlOLD extends OpMode {
+@TeleOp(name="LM2_November_13_DriverControlEVENOLDER", group = "A_LM1")
+public class LM2_November_13_DriverControlEVENOLDER extends OpMode {
     private DcMotor specimen_slides_motor;
     private DcMotor hang_motor;
     private DcMotor left_front;
@@ -29,16 +26,14 @@ public class LM2_November_13_DriverControlOLD extends OpMode {
 
     private TouchSensor touchSensor;
 
-    private VoltageSensor batteryVoltageSensor;
-
     private double driveLeftX_debugger;
     private double driveLeftY_debugger;
     private double driveRightX_debugger;
 
     private double joyStickMargin = 0.004;
 
-    private double intake_value = 1;
-    private double outtake_value = -1;
+    private double intake_value = -1;
+    private double outtake_value = 1;
 
     private static final double COUNTS_PER_MOTOR_REV = 537.7;
     private static final double DRIVE_GEAR_REDUCTION = 1.0;
@@ -96,8 +91,6 @@ public class LM2_November_13_DriverControlOLD extends OpMode {
 
     private ElapsedTime intake_touchSensor_timer = new ElapsedTime();
 
-    private double TRAINED_BATTERY_VOLTAGE = 12.68;
-
     @Override
     public void init() {
         left_front = hardwareMap.get(DcMotor.class, "left_front");
@@ -133,8 +126,6 @@ public class LM2_November_13_DriverControlOLD extends OpMode {
 
         touchSensor = hardwareMap.get(TouchSensor.class, "touch_sensor");
         // Set the mode of the touch sensor
-
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
 
     public void specimenslides() {
@@ -152,10 +143,10 @@ public class LM2_November_13_DriverControlOLD extends OpMode {
     public void sampleintake() {
 
         if (gamepad2.left_trigger > 0.078) {
-            intake_servo.setPower(0.995);
+            intake_servo.setPower(outtake_value);
         }
         else if (gamepad2.right_trigger > 0.078 && allow_intake_motor_to_spin){
-            intake_servo.setPower(-0.995);
+            intake_servo.setPower(intake_value);
             if(touchSensor.getValue() == 1 && allow_intake_motor_to_spin && intake_motor.getTargetPosition() <= 0) {
                 intake_touchSensor_timer.reset();
                 allow_intake_motor_to_spin = false;
@@ -190,12 +181,11 @@ public class LM2_November_13_DriverControlOLD extends OpMode {
                 score_once_debug_solution = true;
                 allow_intake_motor_to_spin = true;
                 intake_motor.setTargetPosition(-205);
-                intake_motor.setPower((0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
+                intake_motor.setPower(0.4);
                 intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
         intake_was_pressed = gamepad2.left_bumper;
-
 
         if (intake_hold == true) {
             /*holds at drop position near bucket
@@ -204,13 +194,16 @@ public class LM2_November_13_DriverControlOLD extends OpMode {
 
             if (intake_motor.getCurrentPosition() < -10 && intake_timer.milliseconds() > 1) {
                 intake_motor.setTargetPosition(0);
-                intake_motor.setPower((0.25 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage()) > 1) ? 1 : (0.325 * (TRAINED_BATTERY_VOLTAGE / batteryVoltageSensor.getVoltage())));
+                intake_motor.setPower(0.4);
                 intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            else if (intake_motor.getCurrentPosition() > -8 && intake_timer.milliseconds() > 1) {
+            else if (intake_motor.getCurrentPosition() > -10 && intake_timer.milliseconds() > 1) {
                 intake_motor.setTargetPosition(0);
-                intake_motor.setPower(0.0);
+                intake_motor.setPower(0.05);
                 intake_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+            else if (intake_timer.milliseconds() > 800) {
+                intake_motor.setPower(0);
             }
 
         }
@@ -279,6 +272,7 @@ public class LM2_November_13_DriverControlOLD extends OpMode {
             bucket_was_pressed = gamepad2.right_bumper; //whether the preset can be triggered or not is conditional
         }
 
+        //last_slides_currentPosition = outtake_slides_motor.getCurrentPosition();
 
 
         telemetry.addData("bucket debugger: ", bucket_one_click_debugger);

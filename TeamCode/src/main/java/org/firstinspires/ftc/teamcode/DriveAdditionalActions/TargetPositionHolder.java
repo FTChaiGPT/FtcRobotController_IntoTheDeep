@@ -25,12 +25,18 @@ public class TargetPositionHolder extends LinearOpMode {
 
     public static double TRAINED_TICKS_PER_REV = 537.7;
 
+    public static double LOWER_MAX_POWER_LMARGIN = 2500;
+    public static double HALF_POWER_LMARGIN = 1200;
+    public static double MOD_POWER_LMARGIN = 900;
+    public static double LOW_POWER_LMARGIN = 500;
+    public static double MIN_POWER_LMARGIN = 35;
+
     private volatile double TICKS_PER_REV = 537.7;
     public volatile double gearRatio = 1; /** GEAR_RATIO output (motor) speed / input (motor) speed **/
     public volatile double holdPower = 0; /** power set once motor has reached its TargetPosition **/
     public volatile double marginOfError = 5 ;
     public volatile double powerMultiplier = 1;
-    public volatile double tuningPowerMultiplier = 1; /**power multiplier that adjustments are made at**/
+    public volatile double tuningPowerMultiplier = 1; /** made on top of power multiplier adjustments **/
 
     private volatile Map<DcMotor, Future<?>> motorTasks = new HashMap<>(); /** HashMap to create instances of classes **/ //holds all Futures of the ExecutorService
     /** Future is used to handle specific parts of the ExecutorService instead of only handling all or none **/
@@ -46,19 +52,20 @@ public class TargetPositionHolder extends LinearOpMode {
         powerMultiplier = varargsData[4];
         tuningPowerMultiplier = varargsData[5];
 
-        double MAX_POWER = ((1 / gearRatio) == 1) ? 1 : Math.min(1 / gearRatio, 1);                                                                                                 /** ternary operator **/
-        double LOWER_MAX_POWER = ((MAX_POWER / 1.3) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 1.3) * powerMultiplier);  /** ternary operator **/
-        double HALF_POWER = ((MAX_POWER / 5.5) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 2) * powerMultiplier);         /** ternary operator **/
-        double MOD_POW = ((MAX_POWER / 7.5) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 3.5) * powerMultiplier);          /** ternary operator **/
-        double LOW_POW = ((MAX_POWER / 9) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 8) * powerMultiplier);              /** ternary operator **/
-        double MIN_POW = ((MAX_POWER / 10) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 9.5) * powerMultiplier);           /** ternary operator **/
-        double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW = ((MAX_POWER / 5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier);                                       /** ternary operator **/
+        double MAX_POWER = Math.min(1 / gearRatio, 1);
+        /** ternary operator **/
+        double LOWER_MAX_POWER = ((MAX_POWER / 1.3) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 1.3) * powerMultiplier);
+        double HALF_POWER = ((MAX_POWER / 5.5) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 2) * powerMultiplier);
+        double MOD_POW = ((MAX_POWER / 7.5) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 3.5) * powerMultiplier);
+        double LOW_POW = ((MAX_POWER / 9) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 8) * powerMultiplier);
+        double MIN_POW = ((MAX_POWER / 10) * powerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : ((MAX_POWER / 9.5) * powerMultiplier);
+        double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW = ((MAX_POWER / 5) * powerMultiplier) > 1 ? 1 : ((MAX_POWER / 1.3) * powerMultiplier);
 
-        /** tuningPowerMultiplier is used after powerMultiplier is used as well **/
-        double MOD_POWER = (MOD_POW * tuningPowerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : (MOD_POW * tuningPowerMultiplier);                    /** ternary operator **/
-        double LOW_POWER = (LOW_POW * tuningPowerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : (LOW_POW * tuningPowerMultiplier);                    /** ternary operator **/
-        double MIN_POWER = (MIN_POW * tuningPowerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : (MIN_POW * tuningPowerMultiplier);                /** ternary operator **/
-        double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER = (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier) > 1 ? 1 : (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier);/** ternary operator **/
+        /** tuningPowerMultiplier is applied after powerMultiplier is applied **/
+        double MOD_POWER = (MOD_POW * tuningPowerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : (MOD_POW * tuningPowerMultiplier);
+        double LOW_POWER = (LOW_POW * tuningPowerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : (LOW_POW * tuningPowerMultiplier);
+        double MIN_POWER = (MIN_POW * tuningPowerMultiplier) > 1 ? ((1 * powerMultiplier <= 1) ? 1 : (1 * powerMultiplier)) : (MIN_POW * tuningPowerMultiplier);
+        double LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER = (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier) > 1 ? 1 : (LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POW * tuningPowerMultiplier);
 
 
         isMotorHolding = true;
@@ -91,14 +98,14 @@ public class TargetPositionHolder extends LinearOpMode {
     }
 
 
-    public double[] processVarargs(Object... varargs) {
+    private double[] processVarargs(Object... varargs) {
 
-        double ticksPerRev = 537.7;
-        double gearRatio = 1.0;
-        double holdPower = 0.0;
-        double marginOfError = 5.0;
-        double powerMultiplier = 1.0;
-        double tuningPowerMultiplier = 1.0;
+        double ticksPerRev = TICKS_PER_REV;
+        double gearRatio = this.gearRatio;
+        double holdPower = this.holdPower;
+        double marginOfError = this.marginOfError;
+        double powerMultiplier = this.powerMultiplier;
+        double tuningPowerMultiplier = this.tuningPowerMultiplier;
 
         for (int i = 0; i < varargs.length; i += 2) {
             if (varargs[i] instanceof String && varargs[i + 1] instanceof Number) {
@@ -117,7 +124,7 @@ public class TargetPositionHolder extends LinearOpMode {
                         holdPower = value;
                         break;
                     case "ALLOWABLE_MARGIN_OF_ERROR":
-                        marginOfError =  value;
+                        marginOfError = value;
                         break;
                     case "POWER_MULTIPLIER":
                         powerMultiplier = value;
@@ -171,7 +178,7 @@ public class TargetPositionHolder extends LinearOpMode {
         double currentBatteryVoltage = batteryVoltageSensor.getVoltage();
         //evaluates motor powers
         /** Tuneable values **/
-        if (positionDifference <= TICKS_PER_REV * (35 / TRAINED_TICKS_PER_REV)) {
+        if (positionDifference <= TICKS_PER_REV * (MIN_POWER_LMARGIN / TRAINED_TICKS_PER_REV)) {
             if (currentBatteryVoltage <= 11.75) {
                 powerAmount = LOW_POWER;
             }
@@ -179,16 +186,16 @@ public class TargetPositionHolder extends LinearOpMode {
                 powerAmount = LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER;
             }
             else powerAmount = MIN_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (500 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (LOW_POWER_LMARGIN / TRAINED_TICKS_PER_REV)) {
             if (currentBatteryVoltage <= 11.75) {
                 powerAmount = LOW_BATTERY_VOLTAGE_LOW_AND_MIN_POWER;
             }
             else powerAmount = LOW_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (900 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (MOD_POWER_LMARGIN / TRAINED_TICKS_PER_REV)) {
             powerAmount = MOD_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (1200 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (HALF_POWER_LMARGIN / TRAINED_TICKS_PER_REV)) {
             powerAmount = HALF_POWER;
-        } else if (positionDifference <= TICKS_PER_REV * (2500 / TRAINED_TICKS_PER_REV)) {
+        } else if (positionDifference <= TICKS_PER_REV * (LOWER_MAX_POWER_LMARGIN / TRAINED_TICKS_PER_REV)) {
             powerAmount = LOWER_MAX_POWER;
         }
         else powerAmount = MAX_POWER;

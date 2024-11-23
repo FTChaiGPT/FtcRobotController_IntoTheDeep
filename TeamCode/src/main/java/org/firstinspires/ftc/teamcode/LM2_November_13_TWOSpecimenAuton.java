@@ -59,15 +59,19 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
         Trajectory moveSamples = drive.trajectoryBuilder(resetBotPos)
                 .splineToConstantHeading(new Vector2d(48,0), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(45,0), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(45,-8.5), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(45,-9.5), Math.toRadians(0))
                 .build();
 
         Trajectory pickSpecimenOne = drive.trajectoryBuilder(pickSpecimenPose)
                 .back(-24.5)
                 .build();
 
-        Trajectory lilRealeaseClinchWithWall = drive.trajectoryBuilder(pickSpecimenOne.end())
-                .back(3)
+        Trajectory lilRealeaseClinchWithWall = drive.trajectoryBuilder(resetBotPos)
+                .forward(-3)
+                .build();
+
+        Trajectory reClinchWithWall = drive.trajectoryBuilder(lilRealeaseClinchWithWall.end())
+                .forward(2)
                 .build();
 
         Trajectory releaseClinchWithWall = drive.trajectoryBuilder(resetBotPos)
@@ -75,8 +79,8 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
                 .build();
 
         Trajectory goBackWithSpecimenTwo = drive.trajectoryBuilder(resetBotPos)
-                .splineToConstantHeading(new Vector2d(18,26), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(25.75,26), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(18,27), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(25,27), Math.toRadians(0))
                 .build();
 
 
@@ -106,9 +110,14 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
         drive.setPoseEstimate(pickSpecimenPose);
         drive.followTrajectory(pickSpecimenOne);
         specimen_slides_motor.setPower(0.35);
+        drive.setPoseEstimate(resetBotPos);
         drive.followTrajectory(lilRealeaseClinchWithWall);
+        specimen_slides_motor.setPower(0.65);
+        sleep(100);
+        drive.followTrajectory(reClinchWithWall);
+        sleep(200);
         specimen_slides_motor.setPower(0.995);
-        sleep(80);
+        sleep(200);
         specimen_slides_motor.setPower(0.35);
 
         drive.setPoseEstimate(resetBotPos);
@@ -118,7 +127,7 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
         drive.followTrajectory(goBackWithSpecimenTwo);
 
         specimen_slides_motor.setPower(-0.995);
-        sleep(300);
+        sleep(375);
         specimen_slides_motor.setPower(0);
 
         left_front.setPower(-0.995);
@@ -126,7 +135,7 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
         right_front.setPower(-0.2235);
         right_back.setPower(-0.2235);
         specimen_slides_motor.setPower(0);
-        sleep(900);
+        sleep(825);
         left_front.setPower(-0.995);
         left_back.setPower(-0.995);
         right_front.setPower(-0.995);

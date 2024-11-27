@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
-import org.firstinspires.ftc.teamcode.RoadrunnerAdditionalActions.*;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -41,8 +40,6 @@ public class LM2_November_13_SpecimenAuton extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap); // the SampleMecanumDrive class (RoadRunner) is made into an object
         drive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-        TurnFast robot = new TurnFast();
 
         Pose2d startPose = new Pose2d(9, -63, 0);
 
@@ -121,7 +118,7 @@ public class LM2_November_13_SpecimenAuton extends LinearOpMode {
         drive.followTrajectory(moveBehindSamples);
 
         sleep(100);
-        robot.turnFast(180, drive, batteryVoltageSensor, telemetry);
+        drive.turn(Math.toRadians(180));
         sleep(280);
 
         drive.setPoseEstimate(resetBotPos);
@@ -141,7 +138,7 @@ public class LM2_November_13_SpecimenAuton extends LinearOpMode {
         drive.followTrajectory(releaseClinchWithWall);
 
         sleep(100);
-        robot.turnFast(180, drive, batteryVoltageSensor, telemetry);
+        drive.turn(Math.toRadians(180));
         sleep(280);
 
         drive.setPoseEstimate(resetBotPos);
@@ -156,7 +153,7 @@ public class LM2_November_13_SpecimenAuton extends LinearOpMode {
         drive.followTrajectory(goToWallForThirdSpecimen);
 
         sleep(150);
-        robot.turnFast(180, drive, batteryVoltageSensor, telemetry);
+        drive.turn(Math.toRadians(180));
         sleep(300);
 
         drive.setPoseEstimate(pickSpecimenPose);
@@ -171,7 +168,7 @@ public class LM2_November_13_SpecimenAuton extends LinearOpMode {
         drive.followTrajectory(releaseClinchWithWall);
 
         sleep(100);
-        robot.turnFast(180, drive, batteryVoltageSensor, telemetry);
+        drive.turn(Math.toRadians(180));
         sleep(300);
 
         drive.setPoseEstimate(resetBotPos);

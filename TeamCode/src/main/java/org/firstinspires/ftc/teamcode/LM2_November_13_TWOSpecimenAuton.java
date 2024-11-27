@@ -43,7 +43,7 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
         Pose2d pickSpecimenPose = new Pose2d(0, 0, Math.toRadians(0));
 
         Trajectory goToRung = drive.trajectoryBuilder(startPose)
-                .forward(33.5)
+                .forward(34.5)
                 .build();
 
         Trajectory releaseClinchWithRung = drive.trajectoryBuilder(goToRung.end())
@@ -59,18 +59,22 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
         Trajectory moveSamples = drive.trajectoryBuilder(resetBotPos)
                 .splineToConstantHeading(new Vector2d(48,0), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(45,0), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(45,-9.5), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(45,-4), Math.toRadians(0))
                 .build();
 
         Trajectory pickSpecimenOne = drive.trajectoryBuilder(pickSpecimenPose)
                 .back(-24.5)
                 .build();
 
-        Trajectory lilRealeaseClinchWithWall = drive.trajectoryBuilder(resetBotPos)
-                .forward(-3)
+        Trajectory lilRealeaseClinchWithWall_PART_ONE = drive.trajectoryBuilder(resetBotPos)
+                .forward(-2)
                 .build();
 
-        Trajectory reClinchWithWall = drive.trajectoryBuilder(lilRealeaseClinchWithWall.end())
+        Trajectory lilRealeaseClinchWithWall_PART_TWO = drive.trajectoryBuilder(resetBotPos)
+                .forward(1.1)
+                .build();
+
+        Trajectory reClinchWithWall = drive.trajectoryBuilder(resetBotPos)
                 .forward(2)
                 .build();
 
@@ -79,8 +83,8 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
                 .build();
 
         Trajectory goBackWithSpecimenTwo = drive.trajectoryBuilder(resetBotPos)
-                .splineToConstantHeading(new Vector2d(18,27), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(25,27), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(18,28), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(22.685,28), Math.toRadians(0))
                 .build();
 
 
@@ -95,7 +99,7 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
         specimen_slides_motor.setPower(0);
 
         specimen_slides_motor.setPower(-0.995);
-        sleep(200);
+        sleep(300);
         drive.followTrajectory(releaseClinchWithRung);
         specimen_slides_motor.setPower(0);
 
@@ -109,15 +113,15 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
 
         drive.setPoseEstimate(pickSpecimenPose);
         drive.followTrajectory(pickSpecimenOne);
-        specimen_slides_motor.setPower(0.35);
+        specimen_slides_motor.setPower(0.2);
         drive.setPoseEstimate(resetBotPos);
-        drive.followTrajectory(lilRealeaseClinchWithWall);
-        specimen_slides_motor.setPower(0.65);
-        sleep(100);
+        drive.followTrajectory(lilRealeaseClinchWithWall_PART_ONE);
+        sleep(85);
+        drive.setPoseEstimate(resetBotPos);
+        drive.followTrajectory(lilRealeaseClinchWithWall_PART_TWO);
+        specimen_slides_motor.setPower(0.75);
+        drive.setPoseEstimate(resetBotPos);
         drive.followTrajectory(reClinchWithWall);
-        sleep(200);
-        specimen_slides_motor.setPower(0.995);
-        sleep(200);
         specimen_slides_motor.setPower(0.35);
 
         drive.setPoseEstimate(resetBotPos);
@@ -127,15 +131,15 @@ public class LM2_November_13_TWOSpecimenAuton extends LinearOpMode {
         drive.followTrajectory(goBackWithSpecimenTwo);
 
         specimen_slides_motor.setPower(-0.995);
-        sleep(375);
-        specimen_slides_motor.setPower(0);
+        sleep(425);
 
         left_front.setPower(-0.995);
         left_back.setPower(-0.995);
-        right_front.setPower(-0.2235);
-        right_back.setPower(-0.2235);
+        right_front.setPower(-0.2);
+        right_back.setPower(-0.2);
+        sleep(400);
         specimen_slides_motor.setPower(0);
-        sleep(825);
+        sleep(425);
         left_front.setPower(-0.995);
         left_back.setPower(-0.995);
         right_front.setPower(-0.995);

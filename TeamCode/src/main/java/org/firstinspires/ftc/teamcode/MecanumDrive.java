@@ -68,9 +68,10 @@ public class MecanumDrive {
         public double trackWidthTicks = 0;
 
         // feedforward parameters (in tick units)
-        public double kS = 0;
-        public double kV = 0;
-        public double kA = 0;
+        public double kS = 2.3080025112897875;
+        public double kV = 0.13199171678549898;
+        public double kA = 0.038;
+
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -139,8 +140,8 @@ public class MecanumDrive {
             imu = lazyImu.get();
 
             // TODO: reverse encoders if needed
-//            leftFront.setDirection(DcMotor.Direction.REVERSE);
-//            rightBack.setDirection(DcMotor.Direction.REVERSE);
+           rightBack.setDirection(DcMotor.Direction.REVERSE);
+           rightFront.setDirection(DcMotor.Direction.REVERSE);
         }
 
         @Override
